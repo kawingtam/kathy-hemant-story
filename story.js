@@ -104,33 +104,18 @@ function go(index) {
 }
 
 
-function tick(time) {
-  if (!playing) return;
+function tick(time){
+  if(!playing) return;
 
-  if (previousTime) {
-    window.scrollBy(
-      0,
-      (time - previousTime) *
-      innerHeight /
-      7500
-    );
+  if(previousTime){
+    window.scrollBy(0,(time-previousTime)*innerHeight/7500);
   }
 
-  previousTime = time;
+  previousTime=time;
 
-  const atEnd =
-    scrollY >=
-    document.documentElement.scrollHeight -
-    innerHeight -
-    1;
-
-  if (atEnd) {
-    window.scrollTo({
-      top: 0,
-      behavior: 'instant'
-    });
-
-    previousTime = 0;
+  if(scrollY >= document.documentElement.scrollHeight-innerHeight-1){
+    window.scrollTo({top:0, behavior:'instant'});
+    previousTime=0;
   }
 
   requestAnimationFrame(tick);
