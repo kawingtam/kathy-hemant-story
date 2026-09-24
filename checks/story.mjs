@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync,readdirSync} from 'node:fs';
+const html=readFileSync('dist/index.html','utf8');
+const paths=[...html.matchAll(/src="([^"]+)"/g)].map(x=>x[1]);
+for(const path of paths)assert(existsSync('dist/'+path),'Missing asset: '+path);
+const expected=readdirSync('dist/assets').filter(x=>/^\d/.test(x)).sort((a,b)=>parseFloat(a)-parseFloat(b));
+const orders=[...html.matchAll(/data-order="([^"]+)"/g)].map(x=>Number(x[1]));
+assert.deepEqual(orders,expected.map(x=>parseFloat(x)));
+assert.equal(orders.length,28);
+assert.equal((html.match(/<section class="page /g)||[]).length,45);
+assert(!paths.some(x=>/photo|collectible|panorama/.test(x)));
+assert(html.includes('TAHOE · CHAPTER ONE')&&html.includes('TAHOE · CHAPTER TWO'));
+assert(html.includes('OUR MEXICO CHAPTER'));
+for(const section of html.matchAll(/<section class="page memory-page[\s\S]*?<\/section>/g))assert(!/<h[12]|chapter-number/.test(section[0]));
+assert(readFileSync('dist/style.css','utf8').includes('object-fit:contain'));
+assert(!readFileSync('dist/story.js','utf8').includes('rotateY'));
+assert(!html.includes('zoox.png')&&!html.includes('chapter-art'));
+console.log('All 28 numbered illustrations in chronological order; 45 pages; separate chapter covers; no original photos; all assets exist.');
